@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Form, Button, ListGroup, Modal } from "react-bootstrap";
+import LlamadosTareas from "../services/llamados";
+import "../styles/Todolist.css";
 
 
 function ToDoList() {
@@ -9,35 +11,60 @@ function ToDoList() {
     const [tareaEditar, setTareaEditar] = useState(null);
     const [textoEditado, setTextoEditado] = useState("");
 
-    const agregarTarea = () => {
+    useEffect(() => {
+        const cargarTareas = async () => {
+            try {
+                const tareasObtenidas = await LlamadosTareas.GetTareas();
+                setTareas(tareasObtenidas);
+            } catch (error) {
+                console.error("Error cargando tareas:", error);
+            }
+        };
+        cargarTareas();
+    }, []);
+
+    const agregarTarea = async () => {
         if (nuevaTarea.trim() !== "") {
-            setTareas([...tareas, { texto: nuevaTarea, completada: false, hora: "" }]);
-            setNuevaTarea("");
+            try {
+                const nueva = await LlamadosTareas.PostTarea(nuevaTarea);
+                setTareas([...tareas, nueva]);
+                setNuevaTarea("");
+            } catch (error) {
+                console.error("Error agregando tarea:", error);
+            }
         }
     };
 
-    const eliminarTarea = (indice) => {
-        const nuevasTareas = tareas.filter((_, i) => i !== indice);
-        setTareas(nuevasTareas);
+    const eliminarTarea = async (id) => {
+        try {
+            await LlamadosTareas.DeleteTarea(id);
+            setTareas(tareas.filter((tarea) => tarea.id !== id));
+        } catch (error) {
+            console.error("Error eliminando tarea:", error);
+        }
     };
 
-    const abrirModalEdicion = (indice) => {
-        setTareaEditar(indice);
-        setTextoEditado(tareas[indice].texto);
+    const abrirModalEdicion = (tarea) => {
+        setTareaEditar(tarea.id);
+        setTextoEditado(tarea.tarea);
         setMostrarModal(true);
     };
 
-    const guardarEdicion = () => {
-        const nuevasTareas = [...tareas];
-        nuevasTareas[tareaEditar].texto = textoEditado;
-        setTareas(nuevasTareas);
-        setMostrarModal(false);
+    const guardarEdicion = async () => {
+        try {
+            await LlamadosTareas.UpdateTarea(textoEditado, tareaEditar);
+            setTareas(tareas.map((t) => (t.id === tareaEditar ? { ...t, tarea: textoEditado } : t)));
+            setMostrarModal(false);
+            
+        } catch (error) {
+            console.error("Error editando tarea:", error);
+        }
     };
 
-    const marcarCompletada = (indice) => {
-        const nuevasTareas = [...tareas];
-        nuevasTareas[indice].completada = !nuevasTareas[indice].completada;
-        nuevasTareas[indice].hora = nuevasTareas[indice].completada ? new Date().toLocaleTimeString() : "";
+    const marcarCompletada = (id) => {
+        const nuevasTareas = tareas.map((t) =>
+            t.id === id ? { ...t, completada: !t.completada, hora: !t.completada ? new Date().toLocaleTimeString() : "" } : t
+        );
         setTareas(nuevasTareas);
     };
 
@@ -56,20 +83,20 @@ function ToDoList() {
                 </Button>
             </Form>
             <ListGroup className="lista-tareas">
-                {tareas.map((tarea, indice) => (
-                    <ListGroup.Item key={indice} className="item-tarea">
+                {tareas.map((tarea) => (
+                    <ListGroup.Item key={tarea.id} className="item-tarea">
                         <Form.Check 
                             type="checkbox" 
                             checked={tarea.completada} 
-                            onChange={() => marcarCompletada(indice)} 
+                            onChange={() => marcarCompletada(tarea.id)} 
                         />
-                        <span className={tarea.completada ? "completada" : ""}>{tarea.texto}</span>
+                        <span className={tarea.completada ? "completada" : ""}>{tarea.tarea}</span>
                         {tarea.completada && <small className="hora">({tarea.hora})</small>}
                         <div>
-                            <Button variant="warning" size="sm" className="me-2" onClick={() => abrirModalEdicion(indice)}>
+                            <Button variant="warning" size="sm" className="me-2" onClick={() => abrirModalEdicion(tarea)}>
                                 Editar
                             </Button>
-                            <Button variant="danger" size="sm" onClick={() => eliminarTarea(indice)}>
+                            <Button variant="danger" size="sm" onClick={() => eliminarTarea(tarea.id)}>
                                 Eliminar
                             </Button>
                         </div>
