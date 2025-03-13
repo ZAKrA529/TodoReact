@@ -1,16 +1,23 @@
 // src/routes/routing.jsx
-import { Routes, Route } from "react-router-dom";
-import ToDoList from "../components/ToDoList";
-import Register from "../components/Register";
-import Login from "../components/Login";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import TodoL from "../pages/TodoL";
+import Login from "../pages/Login";
+import Registro from "../pages/Registro";
 
 const Routing = () => {
   return (
-    <Routes>
-      <Route path="/" element={<ToDoList />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
+    <Router>
+      <Routes>
+      <Route path="/TodoL" element={<TodoL />} />
+      <Route path="/Login" element={<Login/>} />
+      <Route path="/Registro" element={<Registro/>} />
     </Routes>
+    </Router>
+    
+
+
+
+    
   );
 };
 

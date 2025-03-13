@@ -1,9 +1,7 @@
-// src/components/Register.jsx
 import { useState } from "react";
-import crud from "../services/Llamados";
+import { useNavigate } from "react-router-dom";
+import registercalls from "../services/Registercalls";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +9,8 @@ const Register = () => {
     correo: "",
     contraseña: "",
   });
+
+  const navigate = useNavigate();
 
   // Manejar el cambio en los campos del formulario
   const handleChange = (e) => {
@@ -23,11 +23,12 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await crud.PostUser(formData); // Envía los datos al backend
-      alert("Usuario registrado con éxito");
+      
 
-      // Limpiar el formulario
-      setFormData({ nombre: "", correo: "", contraseña: "" });
+      await registercalls.PostUser(formData); // Envía los datos al backend
+      alert("Usuario registrado con éxito");
+      setFormData({ nombre: "", correo: "", contraseña: "" }); // Limpiar formulario
+      navigate("/TodoL"); // Redirigir a la página deseada
     } catch (error) {
       alert("Error al registrar el usuario");
       console.error("Error en el registro:", error);
@@ -35,47 +36,54 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Registro de Usuario</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Nombre:
-          <input
-            type="text"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <br />
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <h2 className="text-center mb-4">Registro de Usuario</h2>
+          <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+            <div className="mb-3">
+              <label htmlFor="nombre" className="form-label">Nombre:</label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
 
-        <label>
-          Correo:
-          <input
-            type="email"
-            name="correo"
-            value={formData.correo}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <br />
+            <div className="mb-3">
+              <label htmlFor="correo" className="form-label">Correo:</label>
+              <input
+                type="email"
+                id="correo"
+                name="correo"
+                value={formData.correo}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
 
-        <label>
-          Contraseña:
-          <input
-            type="password"
-            name="contraseña"
-            value={formData.contraseña}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <br />
+            <div className="mb-3">
+              <label htmlFor="contraseña" className="form-label">Contraseña:</label>
+              <input
+                type="password"
+                id="contraseña"
+                name="contraseña"
+                value={formData.contraseña}
+                onChange={handleChange}
+                className="form-control"
+                required
+              />
+            </div>
 
-        <button type="submit">Registrar</button>
-      </form>
+            <button type="submit" className="btn btn-primary w-100">Registrar</button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { Container, Form, Button, ListGroup, Modal } from "react-bootstrap";
+import { Container, Form, Button, ListGroup, Modal, ProgressBar } from "react-bootstrap";
 import LlamadosTareas from "../services/llamados";
 import "../styles/Todolist.css";
-
 
 function ToDoList() {
     const [tareas, setTareas] = useState([]);
@@ -55,7 +54,6 @@ function ToDoList() {
             await LlamadosTareas.UpdateTarea(textoEditado, tareaEditar);
             setTareas(tareas.map((t) => (t.id === tareaEditar ? { ...t, tarea: textoEditado } : t)));
             setMostrarModal(false);
-            
         } catch (error) {
             console.error("Error editando tarea:", error);
         }
@@ -68,9 +66,18 @@ function ToDoList() {
         setTareas(nuevasTareas);
     };
 
+    const calcularProgreso = () => {
+        if (tareas.length === 0) return 0;
+        const completadas = tareas.filter((t) => t.completada).length;
+        return Math.round((completadas / tareas.length) * 100);
+    };
+
     return (
         <Container className="contenedor-tareas">
             <h2 className="titulo">Lista de Tareas</h2>
+
+            <ProgressBar now={calcularProgreso()} label={`${calcularProgreso()}%`} className="mb-3" />
+
             <Form className="formulario">
                 <Form.Control
                     type="text"
@@ -82,13 +89,14 @@ function ToDoList() {
                     Agregar
                 </Button>
             </Form>
+
             <ListGroup className="lista-tareas">
                 {tareas.map((tarea) => (
                     <ListGroup.Item key={tarea.id} className="item-tarea">
-                        <Form.Check 
-                            type="checkbox" 
-                            checked={tarea.completada} 
-                            onChange={() => marcarCompletada(tarea.id)} 
+                        <Form.Check
+                            type="checkbox"
+                            checked={tarea.completada}
+                            onChange={() => marcarCompletada(tarea.id)}
                         />
                         <span className={tarea.completada ? "completada" : ""}>{tarea.tarea}</span>
                         {tarea.completada && <small className="hora">({tarea.hora})</small>}
@@ -103,7 +111,7 @@ function ToDoList() {
                     </ListGroup.Item>
                 ))}
             </ListGroup>
-            
+
             <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Editar Tarea</Modal.Title>

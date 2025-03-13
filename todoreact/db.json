@@ -1,13 +1,24 @@
 {
   "tareas": [
     {
-      "id": "e1ad",
+      "id": "db86",
       "tarea": "Tarea 1"
     },
     {
-      "id": "1bab",
+      "id": "8b38",
       "tarea": "Tarea 2"
+    },
+    {
+      "id": "f6a1",
+      "tarea": "Tarea 3"
     }
   ],
-  "registro": []
+  "registro": [
+    {
+      "id": "3f07",
+      "nombre": "Daniel",
+      "correo": "medina@gmail.com",
+      "contraseña": "112"
+    }
+  ]
 }
