@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import registercalls from "../services/Registercalls";
+import registercalls from "../services/registercalls";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const Register = () => {
