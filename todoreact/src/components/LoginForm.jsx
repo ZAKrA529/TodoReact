@@ -3,17 +3,6 @@ import { Form, Button, Container, Alert } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Registercalls from "../services/Registercalls";
 
-comparar los dats del getuser con el input, si los datos son iguales, entro al sistema y sessionStorage, pos no entro. Cambiar variables de acuerdo al db.JSON.
-totalmente de acuerdo profe :)
-profe ¿será que me puedes ayudar explicandome un poco mas de react? El useEffect y demas cosillas. Un ciclo infinito?
-Otra consulta ¿puedes ayudarme a subir el proyecto a GitHub? ya lo tnego, mira. Lo que pasa es que no se como subirlo porque me da problemas
-el reposiorio sí esta publico
-GitHub, profe pero ayer si puede subir el proyecto, eso es lo raro
-
-
-
-
-
 function LoginForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
